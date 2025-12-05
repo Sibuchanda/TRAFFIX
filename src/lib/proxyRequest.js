@@ -2,7 +2,7 @@ import http from "http";
 import https from "https";
 import { URL } from "url";
 
-function proxyRequest(clientReq, clientRes, targetUrl) {
+function proxyRequest(clientReq, clientRes, targetUrl, logCallback) {
   const parsed = new URL(targetUrl + clientReq.url);
 
   const options = {
@@ -18,6 +18,10 @@ function proxyRequest(clientReq, clientRes, targetUrl) {
   const backendReq = protocol.request(options, res => {
     clientRes.writeHead(res.statusCode, res.headers);
     res.pipe(clientRes); // Stream Backend response to Client
+
+    res.on("close", ()=>{
+      if(logCallback) logCallback();
+    })
   });
 
   // Stream(forward) Client request body to Backend

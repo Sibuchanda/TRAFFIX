@@ -7,10 +7,8 @@ import backendPool from "./backendPool.js";
 
 
 function startHealthChecker() {
-  console.log("HealthChecker instance started!");
 
   setInterval(() => {
-    console.log("Running health check...");
     BACKENDS.forEach((backend, index) => {
       const healthUrl = new URL(backend.url + HEALTHCHECK_CONFIG.path);
       const protocol = healthUrl.protocol === "https:" ? https : http;

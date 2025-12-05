@@ -4,6 +4,7 @@ dotenv.config();
 import backendPool from './lib/backendPool.js';
 import proxyRequest from './lib/proxyRequest.js';
 import startHealthChecker from './lib/healthChecker.js';
+import { logRequest } from './lib/logger.js';
 
 const PORT = process.env.LB_PORT || 8080;
 
@@ -17,8 +18,12 @@ const server = http.createServer((req, res) => {
     res.statusCode=503;
     return res.end("Service Unavailable: No healthy backend");
   }
-  console.log(`Request forwarded to : ${backend.url}`);
-  proxyRequest(req, res, backend.url);
+  const startTime = Date.now();
+  
+  proxyRequest(req, res, backend.url,()=>{
+     const latency=Date.now() - startTime;
+     logRequest(backend.url, req, latency);
+  });
 });
 
 server.listen(PORT, () => {
