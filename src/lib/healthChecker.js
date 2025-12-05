@@ -4,6 +4,7 @@ import { URL } from "url";
 import BACKENDS from "../config/backend.js";
 import HEALTHCHECK_CONFIG from "../config/healthCheck.js";
 import backendPool from "./backendPool.js";
+import { logHealth } from "./logger.js";
 
 
 function startHealthChecker() {
@@ -21,26 +22,40 @@ function startHealthChecker() {
           method: "GET",
           timeout: HEALTHCHECK_CONFIG.timeout
         },
-        res => {
+        (res) => {
           if (res.statusCode >= 200 && res.statusCode < 400) {
             backendPool.markHealthy(index);
-            console.log(`Healthy: ${backend.url}`);
+            logHealth({
+              backend: backend.url,
+              status: "healthy",
+              statusCode: res.statusCode
+            });
           } else {
             backendPool.markUnhealthy(index);
-            console.log(`Unhealthy (status ${res.statusCode}): ${backend.url}`);
+            logHealth({
+              backend: backend.url,
+              status: "unhealthy",
+              statusCode: res.statusCode
+            });
           }
         }
       );
       // IF the request takes too long
       req.on("timeout", () => {
-        console.log(`Timeout: ${backend.url}`);
         backendPool.markUnhealthy(index);
+        logHealth({
+          backend: backend.url,
+          status: "timeout"
+        });
         req.destroy();
       });
       // If any network error occurs
       req.on("error", () => {
-        console.log(`Error: ${backend.url}`);
         backendPool.markUnhealthy(index);
+        logHealth({
+          backend: backend.url,
+          status: "error"
+        });
       });
       req.end();
     });
