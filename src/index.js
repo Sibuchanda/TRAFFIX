@@ -12,6 +12,11 @@ const PORT = process.env.LB_PORT || 8080;
 startHealthChecker();
 
 const server = http.createServer((req, res) => {
+  // Ignores browser generated favicon request
+  if(req.url=== "/favicon.ico"){
+    res.statusCode=204;
+    res.end();
+  }
   const backend = backendPool.getNextHealthyBackend();
   
   if (!backend) {
