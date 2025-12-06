@@ -4,6 +4,7 @@ dotenv.config();
 import connectDB from './models/connect.js';
 import cors from 'cors'
 import authRoutes from './routes/authRoutes.js'
+import backendRoutes from './routes/backendRoutes.js'
 
 const app = express();
 const PORT = process.env.PORT || 8001;
@@ -17,6 +18,7 @@ app.use(express.json());
 
 //Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/backends', backendRoutes);
 
 export default app;
 
