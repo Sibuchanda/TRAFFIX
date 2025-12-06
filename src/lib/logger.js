@@ -1,10 +1,10 @@
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-// COMMON LOG FORMAT
+// LOG FORMAT
 const logFormat = winston.format.combine(
   winston.format.timestamp(),
-  winston.format.json()
+  winston.format.prettyPrint()
 );
 
 // ACCESS LOG TRANSPORT
