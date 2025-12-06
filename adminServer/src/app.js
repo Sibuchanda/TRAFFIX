@@ -1,9 +1,9 @@
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config();
-import connectDB from './models/connect';
+import connectDB from './models/connect.js';
 import cors from 'cors'
-
+import authRoutes from './routes/authRoutes.js'
 
 const app = express();
 const PORT = process.env.PORT || 8001;
@@ -15,7 +15,8 @@ connectDB(process.env.MONGO_URI);
 app.use(cors());
 app.use(express.json());
 
-
+//Routes
+app.use('/api/auth', authRoutes);
 
 export default app;
 
