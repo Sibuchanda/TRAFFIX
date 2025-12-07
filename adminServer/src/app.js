@@ -1,10 +1,10 @@
-import express from 'express'
-import dotenv from 'dotenv'
+import express from "express";
+import dotenv from "dotenv";
 dotenv.config();
-import connectDB from './models/connect.js';
-import cors from 'cors'
-import authRoutes from './routes/authRoutes.js'
-import backendRoutes from './routes/backendRoutes.js'
+import connectDB from "./models/connect.js";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+import backendRoutes from "./routes/backendRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 8001;
@@ -13,12 +13,18 @@ const PORT = process.env.PORT || 8001;
 connectDB(process.env.MONGO_URI);
 
 //Middlewares
-app.use(cors());
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URI,
+    credentials: true,
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 //Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/backends', backendRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/backends", backendRoutes);
 
 export default app;
-
