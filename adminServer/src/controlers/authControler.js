@@ -79,8 +79,19 @@ export const loginUser = async (req, res) => {
       .update(user.saltvalue + password)
       .digest("hex");
     if (hashedPassword === user.password) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      return res.json({ success: true, message: "SignIn successful" ,token, user: { name: user.name } });
+     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d"
+    });
+      return res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      }).json({
+        success: true,
+        message: "SignIn successful",
+        user: { name: user.name, email: user.email }
+      });
     } else {
       return res
         .status(401)

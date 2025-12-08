@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import connectDB from "./models/connect.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import backendRoutes from "./routes/backendRoutes.js";
 
@@ -14,10 +15,11 @@ connectDB(process.env.MONGO_URI);
 
 //Middlewares
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.CLIENT_URI,
-    credentials: true,
+    credentials: true, // For allowing cookie from frontend
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
   })
