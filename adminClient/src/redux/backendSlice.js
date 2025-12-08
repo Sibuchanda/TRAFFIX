@@ -5,14 +5,11 @@ const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 const API_URL = `${BACKEND_URI}/api/backends`;
 
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  return {
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-      "Content-Type": "application/json",
-    },
-  };
+const axiosConfig = {
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json"
+  }
 };
 
 
@@ -21,7 +18,7 @@ export const fetchBackends = createAsyncThunk(
   'backends/fetchAll',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/all`, getAuthHeaders());
+      const response = await axios.get(`${API_URL}/all`, axiosConfig);
       return response.data.backends;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch backends');
@@ -34,7 +31,7 @@ export const addBackend = createAsyncThunk(
   'backends/add',
   async (backendData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/add`, backendData, getAuthHeaders());
+      const response = await axios.post(`${API_URL}/add`, backendData, axiosConfig);
       return response.data.backend;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add backend');
@@ -47,7 +44,7 @@ export const updateBackend = createAsyncThunk(
   'backends/update',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${API_URL}/${id}`, data, getAuthHeaders());
+      const response = await axios.put(`${API_URL}/${id}`, data, axiosConfig);
       return response.data.backend;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to update backend');
@@ -60,7 +57,7 @@ export const deleteBackend = createAsyncThunk(
   'backends/delete',
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_URL}/${id}`, getAuthHeaders());
+      await axios.delete(`${API_URL}/${id}`, axiosConfig);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to delete backend');
