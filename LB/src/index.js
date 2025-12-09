@@ -5,9 +5,13 @@ dotenv.config();
 import startHealthChecker from "./lib/healthChecker.js";
 import handleProxyLogging from "./lib/proxyLogging.js";
 import handleRequest from "./lib/requestHandler.js";
+import { startBackendUpdater } from "./fetchBackends.js";
 import { logRequest } from "./lib/logger.js";
 
 const PORT = process.env.LB_PORT || 8080;
+
+// Load backends from admin DB (every 5 mins)
+startBackendUpdater();
 
 // Check health status of backend servers
 startHealthChecker();

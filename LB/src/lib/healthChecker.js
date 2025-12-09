@@ -1,7 +1,6 @@
 import http from "http";
 import https from "https";
 import { URL } from "url";
-import BACKENDS from "../config/backend.js";
 import HEALTHCHECK_CONFIG from "../config/healthCheck.js";
 import backendPool from "./backendPool.js";
 import { logHealth } from "./logger.js";
@@ -10,7 +9,8 @@ import { logHealth } from "./logger.js";
 function startHealthChecker() {
 
   setInterval(() => {
-    BACKENDS.forEach((backend, index) => {
+   const backends = backendPool.getAll();
+    backends.forEach((backend, index) => {
       const healthUrl = new URL(backend.url + HEALTHCHECK_CONFIG.path);
       const protocol = healthUrl.protocol === "https:" ? https : http;
 
@@ -24,14 +24,14 @@ function startHealthChecker() {
         },
         (res) => {
           if (res.statusCode >= 200 && res.statusCode < 400) {
-            backendPool.markHealthy(index);
+            backendPool.markHealthy(backend.url);
             logHealth({
               backend: backend.url,
               status: "healthy",
               statusCode: res.statusCode
             });
           } else {
-            backendPool.markUnhealthy(index);
+            backendPool.markUnhealthy(backend.url);
             logHealth({
               backend: backend.url,
               status: "unhealthy",
@@ -42,7 +42,7 @@ function startHealthChecker() {
       );
       // IF the request takes too long
       req.on("timeout", () => {
-        backendPool.markUnhealthy(index);
+        backendPool.markUnhealthy(backend.url);
         logHealth({
           backend: backend.url,
           status: "timeout"
@@ -51,7 +51,7 @@ function startHealthChecker() {
       });
       // If any network error occurs
       req.on("error", () => {
-        backendPool.markUnhealthy(index);
+        backendPool.markUnhealthy(backend.url);
         logHealth({
           backend: backend.url,
           status: "error"

@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2, CheckCircle, XCircle, Clock } from "lucide-react";
 
 function StatusIcon({ status }) {
-  if (status === "healthy") return <CheckCircle className="h-5 w-5 text-green-600" />;
-  if (status === "unhealthy") return <XCircle className="h-5 w-5 text-red-600" />;
+  if (status === true) return <CheckCircle className="h-5 w-5 text-green-600" />;
+  if (status === false) return <XCircle className="h-5 w-5 text-red-600" />;
   return <Clock className="h-5 w-5 text-yellow-600" />;
 }
 

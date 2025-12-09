@@ -1,33 +1,46 @@
-import BACKENDS from "../config/backend.js";
 
 let currentIndex = 0;
+let backendList=[];
+
+export const updateBackendList = (dbBackends)=>{
+   backendList=dbBackends.map(server=>({
+    url: server.url,
+    healthy: server.status,
+   }))
+}
 
 
 const backendPool = {
   // Return all backends
   getAll() {
-    return BACKENDS;
+    return backendList;
   },
-  // Returns Healthy server
-  markHealthy(index) {
-    BACKENDS[index].healthy = true;
+
+  // Mark backend url as healthy
+  markHealthy(url) {
+    backendList = backendList.map(b =>
+      b.url === url ? { ...b, healthy: true } : b
+    );
   },
-  // Returns UnHealthy server
-  markUnhealthy(index) {
-    BACKENDS[index].healthy = false;
+ // Mark backend url as unhealthy
+  markUnhealthy(url) {
+    backendList = backendList.map(b =>
+      b.url === url ? { ...b, healthy: false } : b
+    );
   },
   // Get next server
   getNextHealthyBackend() {
-    const total = BACKENDS.length; // 3
+    const total = backendList.length;
+    if(total===0) return null;
 
     for (let ind = 0; ind < total; ind++) {
-      const backend = BACKENDS[currentIndex];
+      const backend = backendList[currentIndex];
       currentIndex = (currentIndex + 1) % total;
       if (backend.healthy) {
         return backend;
       }
     }
-    return null; // If no server is healthy
+    return null;
   }
 };
 

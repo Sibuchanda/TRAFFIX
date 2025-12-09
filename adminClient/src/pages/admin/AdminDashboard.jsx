@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const dispatch = useDispatch();
 
   const { backends, loading, error } = useSelector((state) => state.backends);
+  console.log(backends);
 
   // UI States
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -116,7 +117,6 @@ const handleDeleteBackend = async () => {
           onLogout={handleLogout}
         />
 
-        {/* Loading + Error UI */}
         {loading && (
           <div className="p-6 text-center text-gray-600">Loading backend servers...</div>
         )}

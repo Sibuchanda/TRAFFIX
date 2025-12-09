@@ -5,7 +5,7 @@ import { addBackend, deleteBackend, getBackends, updateBackend } from '../contro
 const router = express.Router();
 
 router.post('/add', authMiddleware, addBackend);
-router.get('/all', authMiddleware, getBackends);
+router.get('/all', getBackends);
 router.put('/:id', authMiddleware, updateBackend);
 router.delete('/:id', authMiddleware, deleteBackend);
 

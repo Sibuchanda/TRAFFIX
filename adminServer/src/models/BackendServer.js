@@ -10,7 +10,12 @@ const backendSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true
-    }
+    },
+    status : {
+      type: Boolean,
+      required: true,
+      default: false
+    },
   },
   { timestamps: true }
 );
