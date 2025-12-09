@@ -17,7 +17,7 @@ startBackendUpdater();
 startHealthChecker();
 
 const server = http.createServer((req, res) => {
-  // =======  Ignores browser generated favicon request=====
+  // Ignores browser generated favicon request
   if (req.url === "/favicon.ico") {
     res.statusCode = 204;
     logRequest({
@@ -35,6 +35,8 @@ const server = http.createServer((req, res) => {
   // Handling reverse-proxy and logging
   handleProxyLogging(req, res, backend, requestId, clientIp);
 });
+
+
 
 server.listen(PORT, () => {
   console.log(`Load Balancer listening on port: ${PORT}`);

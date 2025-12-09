@@ -1,21 +1,40 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import BackendTableRow from "./BackendTableRow";
+import { checkStatus } from "@/redux/backendSlice";
+import { useDispatch } from "react-redux";
 
-export default function BackendTable({ backends, onEdit, onDelete, onAdd }) {
+export default function BackendTable({ backends, onEdit, onDelete, onAdd, checkBackendStatus }) {
+ const dispatch = useDispatch();
+
+
+
   return (
     <Card className="border border-gray-200">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Backend Servers</CardTitle>
-            <CardDescription>Manage and monitor your backend server infrastructure</CardDescription>
+            <CardDescription>
+              Manage and monitor your backend server infrastructure
+            </CardDescription>
           </div>
-          <Button onClick={onAdd}>
+          <div className="flex items-center justify-center gap-4">
+          <Button onClick={checkBackendStatus} className="cursor-pointer bg-green-600 hover:bg-green-500">
+            Check Status
+          </Button>
+          <Button onClick={onAdd} className="cursor-pointer">
             <Plus className="h-4 w-4 mr-2" />
             Add Server
           </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -23,11 +42,21 @@ export default function BackendTable({ backends, onEdit, onDelete, onAdd }) {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Name</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">URL</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Created</th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                  Status
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                  Name
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                  URL
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">
+                  Created
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>

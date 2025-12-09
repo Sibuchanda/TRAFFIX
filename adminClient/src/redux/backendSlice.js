@@ -1,89 +1,113 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const API_URL = `${BACKEND_URI}/api/backends`;
 
-
 const axiosConfig = {
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json"
-  }
+    "Content-Type": "application/json",
+  },
 };
-
 
 // Async thunks for Getting all backends
 export const fetchBackends = createAsyncThunk(
-  'backends/fetchAll',
+  "backends/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/all`, axiosConfig);
       return response.data.backends;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch backends');
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch backends"
+      );
     }
   }
 );
 
 // Add backend
 export const addBackend = createAsyncThunk(
-  'backends/add',
+  "backends/add",
   async (backendData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/add`, backendData, axiosConfig);
+      const response = await axios.post(
+        `${API_URL}/add`,
+        backendData,
+        axiosConfig
+      );
       return response.data.backend;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to add backend');
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to add backend"
+      );
     }
   }
 );
 
 // Update backend
 export const updateBackend = createAsyncThunk(
-  'backends/update',
+  "backends/update",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`${API_URL}/${id}`, data, axiosConfig);
       return response.data.backend;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to update backend');
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update backend"
+      );
     }
   }
 );
 
 // Delete backend
 export const deleteBackend = createAsyncThunk(
-  'backends/delete',
+  "backends/delete",
   async (id, { rejectWithValue }) => {
     try {
       await axios.delete(`${API_URL}/${id}`, axiosConfig);
       return id;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to delete backend');
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to delete backend"
+      );
     }
   }
 );
 
+// Check backend status
+export const checkStatus = createAsyncThunk(
+  "backends/checkStatus",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/check-status`);
+      return response.data.backends;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update status"
+      );
+    }
+  }
+);
 
 // Slice
 const backendSlice = createSlice({
-  name: 'backends',
+  name: "backends",
   initialState: {
     backends: [],
     loading: false,
     error: null,
-    success: null
+    success: null,
   },
   reducers: {
     clearMessages: (state) => {
       state.error = null;
       state.success = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
-     //fetch backends
+      //fetch backends
       .addCase(fetchBackends.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -104,7 +128,7 @@ const backendSlice = createSlice({
       .addCase(addBackend.fulfilled, (state, action) => {
         state.loading = false;
         state.backends.unshift(action.payload);
-        state.success = 'Backend added successfully';
+        state.success = "Backend added successfully";
       })
       .addCase(addBackend.rejected, (state, action) => {
         state.loading = false;
@@ -117,11 +141,13 @@ const backendSlice = createSlice({
       })
       .addCase(updateBackend.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.backends.findIndex(b => b._id === action.payload._id);
+        const index = state.backends.findIndex(
+          (b) => b._id === action.payload._id
+        );
         if (index !== -1) {
           state.backends[index] = action.payload;
         }
-        state.success = 'Backend updated successfully';
+        state.success = "Backend updated successfully";
       })
       .addCase(updateBackend.rejected, (state, action) => {
         state.loading = false;
@@ -134,14 +160,26 @@ const backendSlice = createSlice({
       })
       .addCase(deleteBackend.fulfilled, (state, action) => {
         state.loading = false;
-        state.backends = state.backends.filter(b => b._id !== action.payload);
-        state.success = 'Backend deleted successfully';
+        state.backends = state.backends.filter((b) => b._id !== action.payload);
+        state.success = "Backend deleted successfully";
       })
       .addCase(deleteBackend.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Check status
+      .addCase(checkStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.backends = action.payload;
+      })
+      .addCase(checkStatus.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(checkStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.backends = action.payload;
       });
-  }
+  },
 });
 
 export const { clearMessages } = backendSlice.actions;

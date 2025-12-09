@@ -7,7 +7,13 @@ import BackendFormDialog from "./components/BackendFormDialog";
 import DeleteConfirmDialog from "./components/DeleteConfirmDialog";
 
 import { useDispatch, useSelector } from "react-redux";
-import { fetchBackends, addBackend, updateBackend, deleteBackend} from "@/redux/backendSlice";
+import {
+  fetchBackends,
+  addBackend,
+  updateBackend,
+  deleteBackend,
+  checkStatus,
+} from "@/redux/backendSlice";
 
 import toast from "react-hot-toast";
 
@@ -26,11 +32,10 @@ export default function AdminDashboard() {
 
   const [formData, setFormData] = useState({ name: "", url: "" });
 
-
   const user = {
     name: "Lester_101",
     email: "admin@gmail.com",
-    role: "Admin"
+    role: "Admin",
   };
 
   // Fetch backends from server
@@ -47,7 +52,7 @@ export default function AdminDashboard() {
 
     try {
       await dispatch(addBackend(formData)).unwrap();
-      toast.success("Backend added successfully!");
+      toast.success("Backend added successfully! It will take 5 minutes to reflect on LoadBalancer");
 
       setFormData({ name: "", url: "" });
       setIsAddDialogOpen(false);
@@ -58,37 +63,46 @@ export default function AdminDashboard() {
 
   // ============ EDIT BACKEND ===============
   const handleEditBackend = async () => {
-  if (!selectedBackend) return;
-  if (!formData.name || !formData.url) {
-    toast.error("Both name and URL are required!");
-    return;
-  }
-  try {
-    await dispatch(updateBackend({ id: selectedBackend._id, data: formData })).unwrap();
-    toast.success("Backend updated successfully!");
+    if (!selectedBackend) return;
+    if (!formData.name || !formData.url) {
+      toast.error("Both name and URL are required!");
+      return;
+    }
+    try {
+      await dispatch(
+        updateBackend({ id: selectedBackend._id, data: formData })
+      ).unwrap();
+      toast.success("Backend updated successfully! It will take 5 minutes to reflect on LoadBalancer");
 
-    setFormData({ name: "", url: "" });
-    setSelectedBackend(null);
-    setIsEditDialogOpen(false);
-  } catch (err) {
-    toast.error(err || "Failed to update backend");
-  }
-};
+      setFormData({ name: "", url: "" });
+      setSelectedBackend(null);
+      setIsEditDialogOpen(false);
+    } catch (err) {
+      toast.error(err || "Failed to update backend");
+    }
+  };
 
   // =============== DELETE BACKEND ============
-const handleDeleteBackend = async () => {
-  if (!selectedBackend) return;
-  try {
-    await dispatch(deleteBackend(selectedBackend._id)).unwrap();
-    toast.success("Backend deleted successfully!");
+  const handleDeleteBackend = async () => {
+    if (!selectedBackend) return;
+    try {
+      await dispatch(deleteBackend(selectedBackend._id)).unwrap();
+      toast.success("Backend deleted successfully! It will take 5 minutes to reflect on LoadBalancer");
 
-    setSelectedBackend(null);
-    setIsDeleteDialogOpen(false);
-  } catch (err) {
-    toast.error(err || "Failed to delete backend");
-  }
-};
+      setSelectedBackend(null);
+      setIsDeleteDialogOpen(false);
+    } catch (err) {
+      toast.error(err || "Failed to delete backend");
+    }
+  };
 
+  // Check Backend Status
+  const checkBackendStatus = () => {
+    dispatch(checkStatus())
+      .unwrap()
+      .then(() => toast.success("Status updated!"))
+      .catch((err) => toast.error(err));
+  };
 
   const openEditDialog = (backend) => {
     setSelectedBackend(backend);
@@ -108,17 +122,24 @@ const handleDeleteBackend = async () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+      />
 
       <div className="flex-1 flex flex-col">
         <Header
           user={user}
-          onChangePassword={() => alert("Change password feature is not implemented yet!")}
+          onChangePassword={() =>
+            alert("Change password feature is not implemented yet!")
+          }
           onLogout={handleLogout}
         />
 
         {loading && (
-          <div className="p-6 text-center text-gray-600">Loading backend servers...</div>
+          <div className="p-6 text-center text-gray-600">
+            Loading backend servers...
+          </div>
         )}
 
         {error && (
@@ -136,6 +157,7 @@ const handleDeleteBackend = async () => {
             backends={backends}
             onEdit={openEditDialog}
             onDelete={openDeleteDialog}
+            checkBackendStatus={checkBackendStatus}
             onAdd={() => setIsAddDialogOpen(true)}
           />
         </div>
