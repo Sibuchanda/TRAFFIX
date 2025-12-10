@@ -135,8 +135,8 @@ export default function AuthPage() {
 
           <Tabs value={tab} onValueChange={setTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="login" className="cursor-pointer">Sign In</TabsTrigger>
+              <TabsTrigger value="signup" className="cursor-pointer">Sign Up</TabsTrigger>
             </TabsList>
 
             {/* Login Tab */}
@@ -318,7 +318,7 @@ export default function AuthPage() {
                       </label>
                     </div>
 
-                    <Button onClick={handleSignup} className="w-full" size="lg">
+                    <Button onClick={handleSignup} className="w-full cursor-pointer" size="lg">
                       Create Account
                     </Button>
                   </div>

@@ -120,6 +120,8 @@ export default function AdminDashboard() {
   // ========= LOGOUT ===============
 const handleLogout = async () => {
   try {
+    const check = confirm("Do you want to logout?")
+    if(!check) return;
     await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,{},{ withCredentials: true });
 
     dispatch(logout());
