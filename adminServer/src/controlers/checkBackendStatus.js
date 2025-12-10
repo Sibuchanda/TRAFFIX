@@ -2,10 +2,9 @@ import axios from "axios";
 import BackendServer from "../models/BackendServer.js";
 import HEALTHCHECK_CONFIG from "../config/healthCheck.js";
 
-
 const checkBackendStatus = async (req, res) => {
   try {
-    const backends = await BackendServer.find();
+    const backends = await BackendServer.find({ admin: req.user.id });
     for (const backend of backends) {
       const healthUrl = backend.url + HEALTHCHECK_CONFIG.path;
 
@@ -26,13 +25,15 @@ const checkBackendStatus = async (req, res) => {
       }
     }
 
-   const updatedList = await BackendServer.find().sort({ createdAt: -1 });
+    const updatedList = await BackendServer.find({
+      admin: req.user.id,
+    }).sort({ createdAt: -1 });
+
     res.json({
       success: true,
       message: "Backend statuses updated",
       backends: updatedList,
     });
-
   } catch (err) {
     res.status(500).json({
       success: false,

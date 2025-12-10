@@ -16,6 +16,11 @@ const backendSchema = new mongoose.Schema(
       required: true,
       default: false
     },
+    admin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    }
   },
   { timestamps: true }
 );

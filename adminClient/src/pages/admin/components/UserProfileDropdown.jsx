@@ -38,14 +38,14 @@ export default function UserProfileDropdown({ admin, onChangePassword, onLogout 
 
         <DropdownMenuItem onClick={onChangePassword}>
           <Key className="mr-2 h-4 w-4" />
-          Change Password
+          <span className="cursor-pointer">Change Password</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={onLogout} className="text-red-600">
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
+          <LogOut className="mr-2 h-4 w-4"/>
+          <span className="cursor-pointer">Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

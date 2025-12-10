@@ -80,7 +80,8 @@ export const checkStatus = createAsyncThunk(
   "backends/checkStatus",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/check-status`);
+      // Axios POST requests require config as the third parameter. If no request body is needed, we must explicitly pass {}; otherwise cookies and headers won’t be sent. Because axios.post signature is --> axios.post(url, data?, config?)
+      const response = await axios.post(`${API_URL}/check-status`,{}, axiosConfig);
       return response.data.backends;
     } catch (error) {
       return rejectWithValue(
@@ -177,7 +178,7 @@ const backendSlice = createSlice({
       })
       .addCase(checkStatus.rejected, (state, action) => {
         state.loading = false;
-        state.backends = action.payload;
+        state.error = action.payload;
       });
   },
 });

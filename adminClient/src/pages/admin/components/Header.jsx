@@ -19,7 +19,8 @@ export default function Header({ admin, onChangePassword, onLogout }) {
         <UserProfileDropdown 
           admin={admin} 
           onChangePassword={onChangePassword} 
-          onLogout={onLogout} 
+          onLogout={onLogout}
+
         />
       </div>
     </header>

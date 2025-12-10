@@ -7,10 +7,10 @@ import checkBackendStatus from '../controlers/checkBackendStatus.js';
 const router = express.Router();
 
 router.post('/add', authMiddleware, addBackend);
-router.get('/all', getBackends);
+router.get('/all', authMiddleware, getBackends);
 router.put('/:id', authMiddleware, updateBackend);
 router.delete('/:id', authMiddleware, deleteBackend);
-router.post('/check-status', checkBackendStatus);
+router.post('/check-status',authMiddleware, checkBackendStatus);
 router.get('/get-admin', authMiddleware, getAdmin);
 
 

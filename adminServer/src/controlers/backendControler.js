@@ -14,14 +14,14 @@ export const addBackend = async (req, res) => {
       });
     }
 
-    const existing = await BackendServer.findOne({ url });
+    const existing = await BackendServer.findOne({ url, admin: req.user.id });
     if (existing) {
       return res.status(400).json({
         success: false,
         message: "This backend URL already exists"
       });
     }
-    const newBackend = await BackendServer.create({ name, url });
+    const newBackend = await BackendServer.create({ name, url, admin: req.user.id });
     return res.status(201).json({
       success: true,
       message: "Backend server added successfully",
@@ -39,7 +39,7 @@ export const addBackend = async (req, res) => {
 // ========== Get all backend servers =========
 export const getBackends = async (req, res) => {
   try {
-    const backends = await BackendServer.find().sort({ createdAt: -1 });
+    const backends = await BackendServer.find({admin: req.user.id}).sort({ createdAt: -1 });
     return res.json({
       success: true,
       backends
@@ -61,7 +61,7 @@ export const updateBackend = async (req, res) => {
     if(!name || !url){
       return res.status(400).json({success: false, message: "Name and URL fields are required"})
     }
-    const backend = await BackendServer.findById(req.params.id);
+    const backend = await BackendServer.findOne({_id: req.params.id, admin: req.user.id});
     if (!backend) {
       return res.status(404).json({
         success: false,
@@ -92,8 +92,10 @@ export const updateBackend = async (req, res) => {
 // ========== Delete a backend server =========
 export const deleteBackend = async (req, res) => {
   try {
-    const backend = await BackendServer.findById(req.params.id);
-    if (!backend) {
+    const backend = await BackendServer.findOneAndDelete({_id: req.params.id,
+      admin: req.user.id});
+    
+      if (!backend) {
       return res.status(404).json({
         success: false,
         message: "Backend server not found"
