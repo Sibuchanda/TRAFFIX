@@ -1,4 +1,6 @@
+import { success } from "zod";
 import BackendServer from "../models/BackendServer.js";
+import User from "../models/User.js";
 
 
 // ======== Add backend =========
@@ -113,3 +115,29 @@ export const deleteBackend = async (req, res) => {
   }
 };
 
+// ========== Fetching Admin User details =========
+export const getAdmin = async (req,res) =>{
+  try{
+    const adminId = req.user.id;
+    const admin = await User.findById(adminId).select("-password -saltvalue");
+    if(!admin){
+      return res.status(404).json({
+        success:false,
+        message: "Admin not found!"
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      admin: {
+        name: admin.name,
+        email: admin.email,
+        role: "Admin"
+      }
+    })
+  }catch(err){
+     return res.status(404).json({
+      success: false,
+      message: err.message || "Admin details not found!"
+     })
+  }
+}

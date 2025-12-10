@@ -16,12 +16,16 @@ import {
 } from "@/redux/backendSlice";
 
 import toast from "react-hot-toast";
+import { getAdminDetails, logout } from "@/redux/authSlice";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { backends, loading, error } = useSelector((state) => state.backends);
-  console.log(backends);
+  const {admin} = useSelector((state)=> state.auth);
 
   // UI States
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,17 +35,15 @@ export default function AdminDashboard() {
   const [selectedBackend, setSelectedBackend] = useState(null);
 
   const [formData, setFormData] = useState({ name: "", url: "" });
-
-  const user = {
-    name: "Lester_101",
-    email: "admin@gmail.com",
-    role: "Admin",
-  };
+   
 
   // Fetch backends from server
   useEffect(() => {
     dispatch(fetchBackends());
-  }, [dispatch]);
+      if (!admin) {
+      dispatch(getAdminDetails());
+    }
+  }, [dispatch,admin]);
 
   // =========== ADD BACKEND ===============
   const handleAddBackend = async () => {
@@ -116,9 +118,18 @@ export default function AdminDashboard() {
   };
 
   // ========= LOGOUT ===============
-  const handleLogout = () => {
-    toast.success("Logged out");
-  };
+const handleLogout = async () => {
+  try {
+    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,{},{ withCredentials: true });
+
+    dispatch(logout());
+    toast.success("Logged out successfully");
+    navigate("/login");
+  } catch (err) {
+    toast.error("Logout failed");
+    console.log(err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -129,7 +140,7 @@ export default function AdminDashboard() {
 
       <div className="flex-1 flex flex-col">
         <Header
-          user={user}
+          admin={admin}
           onChangePassword={() =>
             alert("Change password feature is not implemented yet!")
           }
