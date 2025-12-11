@@ -14,9 +14,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, Mail, Lock, User, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getAdminDetails } from "@/redux/authSlice";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function AuthPage() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState("login");
@@ -49,13 +52,9 @@ export default function AuthPage() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      localStorage.setItem("token", res.data.token);
       toast.success(res?.data?.message);
+      await dispatch(getAdminDetails()).unwrap();
       navigate('/admin-dashboard');
-      setLoginData({
-        email: "",
-        password: ""
-      });
     } catch (err) {
       toast.error(err?.response?.data?.message || "SignIn failed!");
       setLoginData({

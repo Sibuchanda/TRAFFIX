@@ -86,7 +86,8 @@ export const loginUser = async (req, res) => {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/" // Now the cookie will be persistant
       }).json({
         success: true,
         message: "SignIn successful",
