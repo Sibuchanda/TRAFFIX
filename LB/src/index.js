@@ -19,7 +19,7 @@ startHealthChecker();
 const server = http.createServer((req, res) => {
   // Ignores browser generated favicon request
   if (req.url === "/favicon.ico") {
-    res.statusCode = 204;
+    res.statusCode = 204; //No Content
     logRequest({
     type: "IGNORE",
     path: "/favicon.ico"
