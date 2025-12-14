@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 import axios from "axios";
 import { updateBackendList } from "./lib/backendPool.js";
@@ -8,14 +8,20 @@ export const startBackendUpdater = () => {
 
   const fetchBackends = async () => {
     try {
-      const res = await axios.get(`${ADMIN_SERVER_URL}/api/backends/all`);
-      console.log(res.data.backends);
+      const res = await axios.get(
+        `${ADMIN_SERVER_URL}/api/backends/internal/all`,
+        {
+          headers: {
+            "x-lb-secret": process.env.LB_SECRET_KEY,
+          },
+        }
+      );
       updateBackendList(res.data.backends);
     } catch (err) {
       console.error("Failed to fetch backend servers:", err.message);
     }
   };
 
-fetchBackends();
-setInterval(fetchBackends, 5 * 60 * 1000);
+  fetchBackends();
+  setInterval(fetchBackends, 5 * 60 * 1000);
 };

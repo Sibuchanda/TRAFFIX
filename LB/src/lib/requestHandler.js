@@ -8,7 +8,7 @@ const handleRequest = (req, res) => {
 
   const backend = backendPool.getNextHealthyBackend();
   if (!backend) {
-    res.statusCode = 503;
+    res.statusCode = 503; //Service Unavailable
     logError({
       requestId,
       error: "No healthy backend available",

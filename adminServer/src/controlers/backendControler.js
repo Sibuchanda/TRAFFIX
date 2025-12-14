@@ -54,6 +54,24 @@ export const getBackends = async (req, res) => {
   }
 };
 
+// ========== Get all backend servers for Load Balancer =========
+export const getBackendsForLB = async (req, res) => {
+  try {
+    const backends = await BackendServer.find({},"url status").sort({ createdAt: -1 });
+
+    return res.json({
+      success: true,
+      backends
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching backends for LB"
+    });
+  }
+};
+
+
 // ========== Update a backend server =========
 export const updateBackend = async (req, res) => {
   try {
