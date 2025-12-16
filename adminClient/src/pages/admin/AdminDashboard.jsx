@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/SideBar";
 import Header from "./components/Header";
 import StatsGrid from "./components/StatsGrid";
 import BackendTable from "./components/BackendTable";
